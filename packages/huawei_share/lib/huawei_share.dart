@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -9,11 +11,18 @@ class HuaweiShare {
 
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('huawei_share');
+  final methodChannel = const MethodChannel('com.transcodegroup/huawei_share');
 
   Future<String?> getPlatformVersion() async {
     final version =
         await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
+
+  bool? _available = kIsWeb || !Platform.isAndroid //
+      ? false
+      : null;
+
+  Future<bool> isAvailable() async => _available ??=
+      await methodChannel.invokeMethod<bool>('isAvailable') ?? false;
 }

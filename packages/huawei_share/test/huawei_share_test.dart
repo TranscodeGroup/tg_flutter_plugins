@@ -4,7 +4,8 @@ import 'package:huawei_share/huawei_share.dart';
 
 void main() {
   HuaweiShare platform = HuaweiShare();
-  const MethodChannel channel = MethodChannel('huawei_share');
+  const MethodChannel channel =
+      MethodChannel('com.transcodegroup/huawei_share');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
