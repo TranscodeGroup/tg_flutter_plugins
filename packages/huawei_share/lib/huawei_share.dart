@@ -25,4 +25,21 @@ class HuaweiShare {
 
   Future<bool> isAvailable() async => _available ??=
       await methodChannel.invokeMethod<bool>('isAvailable') ?? false;
+
+  Future<void> share({
+    String? text,
+    String? title,
+    String? subject,
+    List<String>? paths,
+    String? mimeType,
+    String? fileProviderAuthority,
+  }) =>
+      methodChannel.invokeMethod('share', {
+        'text': text,
+        'title': title,
+        'subject': subject,
+        'paths': paths,
+        'mimeType': mimeType,
+        'fileProviderAuthority': fileProviderAuthority,
+      });
 }

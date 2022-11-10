@@ -29,6 +29,17 @@ class HuaweiSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         when (call.method) {
             "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
             "isAvailable" -> result.success(share.isAvailable())
+            "share"->{
+                share.share(
+                        text =  call.argument("text"),
+                        title =  call.argument("title"),
+                        subject =  call.argument("subject"),
+                        paths =  call.argument("paths"),
+                        mimeType =  call.argument("mimeType"),
+                        fileProviderAuthority =  call.argument("fileProviderAuthority"),
+                )
+                result.success(null)
+            }
             else -> result.notImplemented()
         }
     }

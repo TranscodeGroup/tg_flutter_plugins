@@ -21,6 +21,14 @@ class _MyAppState extends State<MyApp> {
   late final platformVersion = _huaweiShare.getPlatformVersion();
   late final available = _huaweiShare.isAvailable();
 
+  void _onSharePressed() {
+    _huaweiShare.share(
+      text: 'fuck',
+      title: 'title',
+      subject: 'subject',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,6 +47,10 @@ class _MyAppState extends State<MyApp> {
               FutureBuilder(
                 future: available,
                 builder: (context, s) => Text('Huawei Share: ${s.data}'),
+              ),
+              OutlinedButton(
+                onPressed: _onSharePressed,
+                child: const Text('share'),
               ),
             ],
           ),
