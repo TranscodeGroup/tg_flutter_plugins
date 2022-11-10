@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:huawei_share/huawei_share.dart';
 
 void main() {
-  HuaweiShare platform = HuaweiShare.instance;
+  HuaweiShare platform = HuaweiShare();
   const MethodChannel channel = MethodChannel('huawei_share');
 
   TestWidgetsFlutterBinding.ensureInitialized();

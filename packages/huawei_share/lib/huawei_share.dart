@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class HuaweiShare {
-  static final instance = HuaweiShare._();
+  static final _instance = HuaweiShare._();
+  factory HuaweiShare() => _instance;
+
   HuaweiShare._();
 
   /// The method channel used to interact with the native platform.
