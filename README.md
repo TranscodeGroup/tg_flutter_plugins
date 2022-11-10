@@ -2,6 +2,10 @@
 
 A new Flutter plugin project.
 
+```shell
+flutter create --template=plugin --platforms=android --org=com.transcodegroup huawei_share
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter
