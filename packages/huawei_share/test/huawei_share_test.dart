@@ -4,14 +4,13 @@ import 'package:huawei_share/huawei_share.dart';
 
 void main() {
   HuaweiShare platform = HuaweiShare();
-  const MethodChannel channel =
-      MethodChannel('com.transcodegroup/huawei_share');
+  const MethodChannel channel = MethodChannel(HuaweiShare.channelName);
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      return false;
     });
   });
 
@@ -19,7 +18,7 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('isAvailable', () async {
+    expect(await platform.isAvailable(), false);
   });
 }

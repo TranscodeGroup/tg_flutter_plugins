@@ -28,12 +28,11 @@ class _MyAppState extends State<MyApp> {
   static final _huaweiShare = HuaweiShare();
   static final _imagePicker = ImagePicker();
 
-  late final platformVersion = _huaweiShare.getPlatformVersion();
   late final available = _huaweiShare.isAvailable();
   XFile? _file;
-  void _onSharePressed() async {
+  void _onSharePressed({bool forceUseAndroidShare = false}) async {
     const text = 'fuck';
-    if (!kIsWeb && Platform.isAndroid) {
+    if (!forceUseAndroidShare && !kIsWeb && Platform.isAndroid) {
       _huaweiShare.share(
           text: text,
           title: 'title',
@@ -69,10 +68,6 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               FutureBuilder(
-                future: platformVersion,
-                builder: (context, s) => Text('Running on: ${s.data}'),
-              ),
-              FutureBuilder(
                 future: available,
                 builder: (context, s) => Text('Huawei Share: ${s.data}'),
               ),
@@ -80,9 +75,20 @@ class _MyAppState extends State<MyApp> {
                 onPressed: _onPickFilePressed,
                 child: Text('file: ${_file?.path}'),
               ),
-              OutlinedButton(
-                onPressed: _onSharePressed,
-                child: const Text('share'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _onSharePressed,
+                    child: const Text('Huawei Share'),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: () =>
+                        _onSharePressed(forceUseAndroidShare: true),
+                    child: const Text('Android Share'),
+                  ),
+                ],
               ),
             ],
           ),
