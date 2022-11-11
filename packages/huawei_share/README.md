@@ -4,7 +4,7 @@ Invoke the system sharing function of Huawei phones.
 
 ![android_share](screenshots/android_share.jpg) ==> ![huawei_share](screenshots/huawei_share.jpg)
 
-## Useage
+## Usages
 
 see [example](example/lib/main.dart) for detail.
 
