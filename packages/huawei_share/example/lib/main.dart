@@ -1,10 +1,19 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:huawei_share/huawei_share.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
-void main() {
+late final PackageInfo _packageInfo;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  _packageInfo = await PackageInfo.fromPlatform();
+
   runApp(const MyApp());
 }
 
@@ -16,17 +25,36 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _huaweiShare = HuaweiShare();
+  static final _huaweiShare = HuaweiShare();
+  static final _imagePicker = ImagePicker();
 
   late final platformVersion = _huaweiShare.getPlatformVersion();
   late final available = _huaweiShare.isAvailable();
+  XFile? _file;
+  void _onSharePressed() async {
+    const text = 'fuck';
+    if (!kIsWeb && Platform.isAndroid) {
+      _huaweiShare.share(
+          text: text,
+          title: 'title',
+          subject: 'subject',
+          paths: _file != null ? [_file!.path] : null,
+          mimeType: _file != null ? 'image/*' : null,
+          // Using the image_provider plugin's FileProvider
+          fileProviderAuthority:
+              '${_packageInfo.packageName}.flutter.image_provider');
+    } else {
+      unawaited(_file == null
+          ? Share.share(text)
+          : Share.shareXFiles([_file!], text: text));
+    }
+  }
 
-  void _onSharePressed() {
-    _huaweiShare.share(
-      text: 'fuck',
-      title: 'title',
-      subject: 'subject',
-    );
+  void _onPickFilePressed() async {
+    final file = await _imagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _file = file;
+    });
   }
 
   @override
@@ -47,6 +75,10 @@ class _MyAppState extends State<MyApp> {
               FutureBuilder(
                 future: available,
                 builder: (context, s) => Text('Huawei Share: ${s.data}'),
+              ),
+              TextButton(
+                onPressed: _onPickFilePressed,
+                child: Text('file: ${_file?.path}'),
               ),
               OutlinedButton(
                 onPressed: _onSharePressed,

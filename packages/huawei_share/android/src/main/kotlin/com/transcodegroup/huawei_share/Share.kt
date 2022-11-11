@@ -68,6 +68,15 @@ internal class Share(
             if (activity == null) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
+        if (fileUris.isNotEmpty()) {
+            // Make chooser can read fileUris
+            context.packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY).forEach { info ->
+                fileUris.forEach { uri ->
+                    context.grantUriPermission(info.activityInfo.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            }
+        }
+
         context.startActivity(chooserIntent)
     }
 }
