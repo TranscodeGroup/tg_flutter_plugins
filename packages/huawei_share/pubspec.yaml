@@ -1,6 +1,6 @@
 name: huawei_share
 description: Invoke the system sharing function of Huawei phones.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/TranscodeGroup/tg_flutter_plugins/tree/main/packages/huawei_share
 
 environment:

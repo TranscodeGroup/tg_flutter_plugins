@@ -7,22 +7,27 @@ import android.content.pm.PackageManager
 import androidx.core.content.FileProvider
 import java.io.File
 
+
 internal class Share(
         private val applicationContext: Context,
         var activity: Activity? = null,
 ) {
-    companion object {
-        const val ACTION_HW_CHOOSER = "com.huawei.intent.action.hwCHOOSER"
-        const val HW_CHOOSER_PACKAGE_NAME = "com.huawei.android.internal.app"
+    enum class OemChooser(
+            val action: String,
+            val packageName: String,
+    ) {
+        HUAWEI("com.huawei.intent.action.hwCHOOSER", "com.huawei.android.internal.app"),
+        HIHONOR("com.hihonor.intent.action.hwCHOOSER", "com.hihonor.android.internal.app")
     }
 
     private val context get() = activity ?: applicationContext
 
-    fun isAvailable(): Boolean {
-        val resolveInfo = context.packageManager.resolveActivity(Intent(ACTION_HW_CHOOSER), PackageManager.MATCH_DEFAULT_ONLY)
+    fun getAvailableOemChooser(): OemChooser? =
+            OemChooser.values().firstOrNull {
+                val resolveInfo = context.packageManager.resolveActivity(Intent(it.action), PackageManager.MATCH_DEFAULT_ONLY)
 
-        return resolveInfo?.activityInfo?.packageName == HW_CHOOSER_PACKAGE_NAME
-    }
+                return@firstOrNull resolveInfo?.activityInfo?.packageName == it.packageName
+            }
 
     fun share(
             text: String?,
@@ -61,8 +66,8 @@ internal class Share(
         }
 
         val chooserIntent = Intent.createChooser(intent, null).apply {
-            if (isAvailable()) {
-                action = ACTION_HW_CHOOSER
+            getAvailableOemChooser()?.let {
+                action = it.action;
             }
 
             if (activity == null) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

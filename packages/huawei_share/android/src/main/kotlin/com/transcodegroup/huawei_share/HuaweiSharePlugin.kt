@@ -27,7 +27,7 @@ class HuaweiSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onMethodCall(call: MethodCall, result: Result) {
 
         when (call.method) {
-            "isAvailable" -> result.success(share.isAvailable())
+            "isAvailable" -> result.success(share.getAvailableOemChooser() != null)
             "share"->{
                 share.share(
                         text =  call.argument("text"),
