@@ -6,8 +6,10 @@ homepage: https://github.com/TranscodeGroup/tg_flutter_plugins/tree/main/package
 environment:
   sdk: '>=2.18.4 <3.0.0'
 
-# dependencies:
-#   path: ^1.8.0
+dependencies:
+  # path: ^1.8.0
+  excel: ^2.0.1
+  characters: ^1.2.1
 
 dev_dependencies:
   lints: ^2.0.0

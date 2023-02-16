@@ -1,4 +1,4 @@
-/// 泰国行政区划之府
+/// Generate by xxx, DO NOT EDIT IT
 const Map<String, String> thProvincesData = {
   'TH10': 'กรุงเทพมหานคร',
   'TH11': 'สมุทรปราการ',
