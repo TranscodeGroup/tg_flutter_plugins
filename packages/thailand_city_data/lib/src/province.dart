@@ -1,5 +1,5 @@
 /// 泰国行政区划之府
-const Map<String, String> thaProvincesData = {
+const Map<String, String> thProvincesData = {
   'TH10': 'กรุงเทพมหานคร',
   'TH11': 'สมุทรปราการ',
   'TH12': 'นนทบุรี',
