@@ -1,4 +1,4 @@
-/// Generate by xxx, DO NOT EDIT IT
+/// Generated file. Do not edit.
 const Map<String, String> thProvincesData = {
   'TH10': 'กรุงเทพมหานคร',
   'TH11': 'สมุทรปราการ',

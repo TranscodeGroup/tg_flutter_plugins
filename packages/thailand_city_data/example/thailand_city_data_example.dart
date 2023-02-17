@@ -10,9 +10,9 @@ void main(List<String> args) async {
 
   // 保存到excel
   final newTownList = getTownList(list[1], list[2], list[3]);
-  saveToExcel(
+  await saveToExcel(
     newTownList,
-    path: './example/excel/tha_adm_feature_areas_output.xlsx',
+    path: 'example/excel/tha_adm_feature_areas_output.xlsx',
   );
 
   // 保存到dart文件
@@ -36,23 +36,23 @@ void main(List<String> args) async {
 }
 
 /// 保存到excel文件
-void saveToExcel(
+Future<void> saveToExcel(
   List<Map<String, String>> list, {
   required String path,
-}) {
+}) async {
   // list数组最前面插入1个数据(key)
   final firstObject = list.first;
   list.insert(0, firstObject);
 
-  var excel = Excel.createExcel();
-  Sheet sheetObject = excel['Th'];
+  final excel = Excel.createExcel();
+  final Sheet sheetObject = excel['Th'];
 
   for (var i = 0; i < list.length; i++) {
     final item = list[i];
     final keys = item.keys.toList();
     for (var j = 0; j < keys.length; j++) {
       final key = keys[j];
-      var cell = sheetObject.cell(
+      final cell = sheetObject.cell(
         CellIndex.indexByColumnRow(
           columnIndex: j,
           rowIndex: i,
@@ -62,10 +62,11 @@ void saveToExcel(
     }
   }
 
-  var fileBytes = excel.save();
-  File(path)
-    ..createSync(recursive: true)
-    ..writeAsBytesSync(fileBytes!);
+  final fileBytes = excel.save();
+
+  final file = File(path);
+  await file.create(recursive: true);
+  await file.writeAsBytes(fileBytes!);
 }
 
 /// 保存到文件
@@ -92,7 +93,7 @@ Future<void> saveToFile(
 
     // json文件写入
     await jsonFile.writeAsString(
-      '''/// Generate by xxx, DO NOT EDIT IT
+      '''/// Generated file. Do not edit.
 const $field = $fieldGeneric$contents;
 ''',
       flush: true,
@@ -110,55 +111,51 @@ List<Map<String, String>> getTownList(
   List<Map<String, String>> districtList,
   List<Map<String, String>> townList,
 ) {
-  // 1.
   final newProvinceList = provinceList.map((province) {
-    final mapEntry = <String, String>{
+    return {
       'code_country': 'Thailand',
       'code_prov': province['ADM1_PCODE'] ?? '',
       'name_prov': province['ADM1_TH'] ?? '',
     };
-    return Map.fromEntries(mapEntry.entries);
   }).toList();
 
-  // 2.
-  var newDistrictList = <Map<String, String>>[];
+  final newDistrictList = <Map<String, String>>[];
 
-  for (var newProvince in newProvinceList) {
+  for (final newProvince in newProvinceList) {
     final codeProv = newProvince['code_prov'];
 
-    for (var district in districtList) {
+    for (final district in districtList) {
       if (codeProv == district['ADM1_PCODE']) {
-        final mapEntry = <String, String>{
-          'code_country': 'Thailand',
-          'code_prov': district['ADM1_PCODE'] ?? '',
-          'name_prov': district['ADM1_TH'] ?? '',
-          'code_city': district['ADM2_PCODE'] ?? '',
-          'name_city': district['ADM2_TH'] ?? '',
-        };
-        final map = Map.fromEntries(mapEntry.entries);
-        newDistrictList.add(map);
+        newDistrictList.add(
+          {
+            'code_country': 'Thailand',
+            'code_prov': district['ADM1_PCODE'] ?? '',
+            'name_prov': district['ADM1_TH'] ?? '',
+            'code_city': district['ADM2_PCODE'] ?? '',
+            'name_city': district['ADM2_TH'] ?? '',
+          },
+        );
       }
     }
   }
 
-  // 3.
-  var newTownList = <Map<String, String>>[];
+  final newTownList = <Map<String, String>>[];
 
-  for (var newDistrict in newDistrictList) {
+  for (final newDistrict in newDistrictList) {
     final codeCity = newDistrict['code_city'];
-    for (var town in townList) {
+    for (final town in townList) {
       if (codeCity == town['ADM2_PCODE']) {
-        final mapEntry = <String, String>{
-          'code_country': 'Thailand',
-          'code_prov': town['ADM1_PCODE'] ?? '',
-          'name_prov': town['ADM1_TH'] ?? '',
-          'code_city': town['ADM2_PCODE'] ?? '',
-          'name_city': town['ADM2_TH'] ?? '',
-          'code_coun': town['ADM3_PCODE'] ?? '',
-          'name_coun': town['ADM3_TH'] ?? '',
-        };
-        final map = Map.fromEntries(mapEntry.entries);
-        newTownList.add(map);
+        newTownList.add(
+          {
+            'code_country': 'Thailand',
+            'code_prov': town['ADM1_PCODE'] ?? '',
+            'name_prov': town['ADM1_TH'] ?? '',
+            'code_city': town['ADM2_PCODE'] ?? '',
+            'name_city': town['ADM2_TH'] ?? '',
+            'code_coun': town['ADM3_PCODE'] ?? '',
+            'name_coun': town['ADM3_TH'] ?? '',
+          },
+        );
       }
     }
   }
@@ -177,39 +174,25 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
   List<Map<String, String>> provinceList,
   List<Map<String, String>> districtList,
 ) {
-  final map =
-      SplayTreeMap<String, Map<String, Map<String, String>>>((key1, key2) {
-    return key1.compareTo(key2);
-  });
+  final map = SplayTreeMap<String, Map<String, Map<String, String>>>();
 
   for (final province in provinceList) {
     final provinceCode = province['ADM1_PCODE'] ?? '';
 
-    final kMap = SplayTreeMap<String, Map<String, String>>((key1, key2) {
-      return key1.compareTo(key2);
-    });
+    final districtMap = SplayTreeMap<String, Map<String, String>>();
 
     for (final district in districtList) {
-      final name = district['ADM2_TH'] ?? '';
-      final code = district['ADM2_PCODE'] ?? '';
-
       if (provinceCode == district['ADM1_PCODE']) {
-        final mMap = <String, String>{};
-        final mMapEntry = <String, String>{
+        final name = district['ADM2_TH'] ?? '';
+        final code = district['ADM2_PCODE'] ?? '';
+        districtMap[code] = <String, String>{
           'name': name,
           'alpha': name.characters.first
         };
-        mMap.addEntries(mMapEntry.entries);
-
-        final kMapEntry = <String, Map<String, String>>{code: mMap};
-        kMap.addEntries(kMapEntry.entries);
       }
     }
 
-    final mapEntry = <String, Map<String, Map<String, String>>>{
-      provinceCode: kMap,
-    };
-    map.addEntries(mapEntry.entries);
+    map[provinceCode] = districtMap;
   }
 
   return map;
@@ -217,30 +200,26 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
 
 /// 生成行政区划之府的json
 Map<String, String> getProvince(List<Map<String, String>> provinceList) {
-  final map = SplayTreeMap<String, String>((key1, key2) {
-    return key1.compareTo(key2);
-  });
+  final map = SplayTreeMap<String, String>();
 
   for (final province in provinceList) {
     final key = province['ADM1_PCODE'] ?? '';
     final value = province['ADM1_TH'] ?? '';
-    final mapEntry = <String, String>{key: value};
-    map.addEntries(mapEntry.entries);
+
+    map[key] = value;
   }
   return map;
 }
 
 /// 将excel表数据转换成json数组
 Future<List<List<Map<String, String>>>> excelToJson() async {
-  final file = './example/excel/tha_adm_feature_areas_20191106.xlsx';
+  final file = 'example/excel/tha_adm_feature_areas_20191106.xlsx';
   final bytes = await File(file).readAsBytes();
   final excel = Excel.decodeBytes(bytes);
 
   final list = <List<Map<String, String>>>[];
 
-  for (final key in excel.tables.keys) {
-    final table = excel.tables[key]!;
-
+  for (final table in excel.tables.values) {
     // 有多少竖列的数据(keys)
     final column = table.maxCols;
 
@@ -258,18 +237,10 @@ Future<List<List<Map<String, String>>>> excelToJson() async {
       final map = <String, String>{};
 
       for (var j = 0; j < column; j++) {
-        final data0 = rows[0][j];
-        final data0Value = data0?.value;
-        final key = data0Value.toString();
+        final key = (rows[0][j]?.value).toString();
+        final value = (rows[i][j]?.value).toString();
 
-        final data = rows[i][j];
-        final dataValue = data?.value;
-        final value = dataValue.toString();
-
-        final mapEntry = <String, String>{
-          key: value,
-        };
-        map.addEntries(mapEntry.entries);
+        map[key] = value;
       }
 
       maps.add(map);

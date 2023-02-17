@@ -1,4 +1,4 @@
-/// Generate by xxx, DO NOT EDIT IT
+/// Generated file. Do not edit.
 const Map<String, dynamic> thCitiesData =
     <String, Map<String, Map<String, String>>>{
   'TH10': {
