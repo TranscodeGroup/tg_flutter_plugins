@@ -8,6 +8,14 @@ import 'package:excel/excel.dart';
 void main(List<String> args) async {
   final list = await excelToJson();
 
+  // 保存到excel
+  final newTownList = getTownList(list[1], list[2], list[3]);
+  saveToExcel(
+    newTownList,
+    path: './example/excel/tha_adm_feature_areas_output.xlsx',
+  );
+
+  // 保存到dart文件
   final provinceMap = getProvince(list[1]);
   await saveToFile(
     provinceMap,
@@ -25,6 +33,39 @@ void main(List<String> args) async {
 
   await Process.run('dart', ['format', 'lib']);
   await Process.run('dart', ['fix', '--apply']);
+}
+
+/// 保存到excel文件
+void saveToExcel(
+  List<Map<String, String>> list, {
+  required String path,
+}) {
+  // list数组最前面插入1个数据(key)
+  final firstObject = list.first;
+  list.insert(0, firstObject);
+
+  var excel = Excel.createExcel();
+  Sheet sheetObject = excel['Th'];
+
+  for (var i = 0; i < list.length; i++) {
+    final item = list[i];
+    final keys = item.keys.toList();
+    for (var j = 0; j < keys.length; j++) {
+      final key = keys[j];
+      var cell = sheetObject.cell(
+        CellIndex.indexByColumnRow(
+          columnIndex: j,
+          rowIndex: i,
+        ),
+      );
+      cell.value = (i == 0) ? key : item[key];
+    }
+  }
+
+  var fileBytes = excel.save();
+  File(path)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(fileBytes!);
 }
 
 /// 保存到文件
@@ -61,6 +102,74 @@ const $field = $fieldGeneric$contents;
   } catch (e) {
     print('执行写入文件失败');
   }
+}
+
+/// 生成行政区划之镇的json数组
+List<Map<String, String>> getTownList(
+  List<Map<String, String>> provinceList,
+  List<Map<String, String>> districtList,
+  List<Map<String, String>> townList,
+) {
+  // 1.
+  final newProvinceList = provinceList.map((province) {
+    final mapEntry = <String, String>{
+      'code_country': 'Thailand',
+      'code_prov': province['ADM1_PCODE'] ?? '',
+      'name_prov': province['ADM1_TH'] ?? '',
+    };
+    return Map.fromEntries(mapEntry.entries);
+  }).toList();
+
+  // 2.
+  var newDistrictList = <Map<String, String>>[];
+
+  for (var newProvince in newProvinceList) {
+    final codeProv = newProvince['code_prov'];
+
+    for (var district in districtList) {
+      if (codeProv == district['ADM1_PCODE']) {
+        final mapEntry = <String, String>{
+          'code_country': 'Thailand',
+          'code_prov': district['ADM1_PCODE'] ?? '',
+          'name_prov': district['ADM1_TH'] ?? '',
+          'code_city': district['ADM2_PCODE'] ?? '',
+          'name_city': district['ADM2_TH'] ?? '',
+        };
+        final map = Map.fromEntries(mapEntry.entries);
+        newDistrictList.add(map);
+      }
+    }
+  }
+
+  // 3.
+  var newTownList = <Map<String, String>>[];
+
+  for (var newDistrict in newDistrictList) {
+    final codeCity = newDistrict['code_city'];
+    for (var town in townList) {
+      if (codeCity == town['ADM2_PCODE']) {
+        final mapEntry = <String, String>{
+          'code_country': 'Thailand',
+          'code_prov': town['ADM1_PCODE'] ?? '',
+          'name_prov': town['ADM1_TH'] ?? '',
+          'code_city': town['ADM2_PCODE'] ?? '',
+          'name_city': town['ADM2_TH'] ?? '',
+          'code_coun': town['ADM3_PCODE'] ?? '',
+          'name_coun': town['ADM3_TH'] ?? '',
+        };
+        final map = Map.fromEntries(mapEntry.entries);
+        newTownList.add(map);
+      }
+    }
+  }
+
+  newTownList.sort((a, b) {
+    final key1 = a['code_coun'] ?? '';
+    final key2 = b['code_coun'] ?? '';
+    return key1.compareTo(key2);
+  });
+
+  return newTownList;
 }
 
 /// 生成行政区划之县的json
