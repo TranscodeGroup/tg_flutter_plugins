@@ -111,13 +111,13 @@ List<Map<String, String>> getTownList(
   List<Map<String, String>> districtList,
   List<Map<String, String>> townList,
 ) {
-  final newProvinceList = provinceList.map((province) {
-    return {
-      'code_country': 'Thailand',
-      'code_prov': province['ADM1_PCODE'] ?? '',
-      'name_prov': province['ADM1_TH'] ?? '',
-    };
-  }).toList();
+  final newProvinceList = provinceList
+      .map((province) => {
+            'code_country': 'Thailand',
+            'code_prov': province['ADM1_PCODE'] ?? '',
+            'name_prov': province['ADM1_TH'] ?? '',
+          })
+      .toList();
 
   final newDistrictList = <Map<String, String>>[];
 
@@ -217,37 +217,30 @@ Future<List<List<Map<String, String>>>> excelToJson() async {
   final bytes = await File(file).readAsBytes();
   final excel = Excel.decodeBytes(bytes);
 
-  final list = <List<Map<String, String>>>[];
+  final sheets = <List<Map<String, String>>>[];
 
   for (final table in excel.tables.values) {
-    // 有多少竖列的数据(keys)
-    final column = table.maxCols;
-
-    // 有多少横行的数据(包含了第一行的keys)
-    final row = table.maxRows;
-
     // 2-D dynamic List
     final rows = table.rows;
+    final sheet = <Map<String, String>>[];
 
-    // list
-    final maps = <Map<String, String>>[];
+    final keyRow = rows[0];
+    for (var i = 1; i < rows.length; i++) {
+      final row = rows[i];
+      final item = <String, String>{};
 
-    // for
-    for (var i = 1; i < row; i++) {
-      final map = <String, String>{};
+      for (var j = 0; j < row.length; j++) {
+        final key = (keyRow[j]?.value).toString();
+        final value = (row[j]?.value).toString();
 
-      for (var j = 0; j < column; j++) {
-        final key = (rows[0][j]?.value).toString();
-        final value = (rows[i][j]?.value).toString();
-
-        map[key] = value;
+        item[key] = value;
       }
 
-      maps.add(map);
+      sheet.add(item);
     }
 
-    list.add(maps);
+    sheets.add(sheet);
   }
 
-  return list;
+  return sheets;
 }
