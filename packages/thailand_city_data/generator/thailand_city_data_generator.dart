@@ -12,7 +12,7 @@ void main(List<String> args) async {
   final newTownList = getTownList(list[1], list[2], list[3]);
   await saveToExcel(
     newTownList,
-    path: 'example/excel/tha_adm_feature_areas_output.xlsx',
+    path: 'generator/excel/tha_adm_feature_areas_output.xlsx',
   );
 
   // 保存到dart文件
@@ -213,7 +213,7 @@ Map<String, String> getProvince(List<Map<String, String>> provinceList) {
 
 /// 将excel表数据转换成json数组
 Future<List<List<Map<String, String>>>> excelToJson() async {
-  final file = 'example/excel/tha_adm_feature_areas_20191106.xlsx';
+  final file = 'generator/excel/tha_adm_feature_areas_20191106.xlsx';
   final bytes = await File(file).readAsBytes();
   final excel = Excel.decodeBytes(bytes);
 
