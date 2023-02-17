@@ -6,10 +6,10 @@ import 'package:characters/characters.dart';
 import 'package:excel/excel.dart';
 
 void main(List<String> args) async {
-  final list = excelToJson();
+  final list = await excelToJson();
 
   final provinceMap = getProvince(list[1]);
-  saveToFile(
+  await saveToFile(
     provinceMap,
     field: 'Map<String, String> thProvincesData',
     fileName: 'province',
@@ -36,7 +36,7 @@ Future<void> saveToFile(
 }) async {
   print('开始执行写入文件');
   try {
-    File jsonFile = File('lib/src/$fileName.dart');
+    final jsonFile = File('lib/src/$fileName.dart');
 
     //判断文件是否存在
     if (!await jsonFile.exists()) {
@@ -68,25 +68,25 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
   List<Map<String, String>> provinceList,
   List<Map<String, String>> districtList,
 ) {
-  var map =
+  final map =
       SplayTreeMap<String, Map<String, Map<String, String>>>((key1, key2) {
     return key1.compareTo(key2);
   });
 
-  for (var province in provinceList) {
+  for (final province in provinceList) {
     final provinceCode = province['ADM1_PCODE'] ?? '';
 
-    var kMap = SplayTreeMap<String, Map<String, String>>((key1, key2) {
+    final kMap = SplayTreeMap<String, Map<String, String>>((key1, key2) {
       return key1.compareTo(key2);
     });
 
-    for (var district in districtList) {
+    for (final district in districtList) {
       final name = district['ADM2_TH'] ?? '';
       final code = district['ADM2_PCODE'] ?? '';
 
       if (provinceCode == district['ADM1_PCODE']) {
-        var mMap = <String, String>{};
-        var mMapEntry = <String, String>{
+        final mMap = <String, String>{};
+        final mMapEntry = <String, String>{
           'name': name,
           'alpha': name.characters.first
         };
@@ -108,11 +108,11 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
 
 /// 生成行政区划之府的json
 Map<String, String> getProvince(List<Map<String, String>> provinceList) {
-  var map = SplayTreeMap<String, String>((key1, key2) {
+  final map = SplayTreeMap<String, String>((key1, key2) {
     return key1.compareTo(key2);
   });
 
-  for (var province in provinceList) {
+  for (final province in provinceList) {
     final key = province['ADM1_PCODE'] ?? '';
     final value = province['ADM1_TH'] ?? '';
     final mapEntry = <String, String>{key: value};
@@ -122,14 +122,14 @@ Map<String, String> getProvince(List<Map<String, String>> provinceList) {
 }
 
 /// 将excel表数据转换成json数组
-List<List<Map<String, String>>> excelToJson() {
-  var file = './example/excel/tha_adm_feature_areas_20191106.xlsx';
-  var bytes = File(file).readAsBytesSync();
-  var excel = Excel.decodeBytes(bytes);
+Future<List<List<Map<String, String>>>> excelToJson() async {
+  final file = './example/excel/tha_adm_feature_areas_20191106.xlsx';
+  final bytes = await File(file).readAsBytes();
+  final excel = Excel.decodeBytes(bytes);
 
-  var list = <List<Map<String, String>>>[];
+  final list = <List<Map<String, String>>>[];
 
-  for (var key in excel.tables.keys) {
+  for (final key in excel.tables.keys) {
     final table = excel.tables[key]!;
 
     // 有多少竖列的数据(keys)
@@ -142,11 +142,11 @@ List<List<Map<String, String>>> excelToJson() {
     final rows = table.rows;
 
     // list
-    var maps = <Map<String, String>>[];
+    final maps = <Map<String, String>>[];
 
     // for
     for (var i = 1; i < row; i++) {
-      var map = <String, String>{};
+      final map = <String, String>{};
 
       for (var j = 0; j < column; j++) {
         final data0 = rows[0][j];
