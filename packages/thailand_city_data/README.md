@@ -8,5 +8,3 @@ Thailand administrative data for [city_pickers](https://pub.dev/packages/city_pi
 
 - [Thailand - Subnational Administrative Boundaries - Humanitarian Data Exchange](https://data.humdata.org/dataset/cod-ab-tha)
 - [city_pickers | Flutter Package](https://pub.dev/packages/city_pickers)
-
-
