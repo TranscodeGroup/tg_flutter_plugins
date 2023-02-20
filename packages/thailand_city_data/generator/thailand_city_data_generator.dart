@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:characters/characters.dart';
 import 'package:excel/excel.dart';
 
 void main(List<String> args) async {
@@ -187,7 +186,7 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
         final code = district['ADM2_PCODE'] ?? '';
         districtMap[code] = <String, String>{
           'name': name,
-          'alpha': name.characters.first
+          'alpha': name[0],
         };
       }
     }
