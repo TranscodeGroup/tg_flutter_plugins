@@ -1,3 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.transcodegroup.huawei_share">
+    package="com.transcodegroup.huawei_share">
+    <!-- TODO: 测试该是否有效 -->
+    <queries>
+        <intent>
+            <action android:name="com.huawei.intent.action.hwCHOOSER" />
+        </intent>
+        <intent>
+            <action android:name="com.hihonor.intent.action.hwCHOOSER" />
+        </intent>
+    </queries>
 </manifest>
