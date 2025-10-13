@@ -2,3 +2,7 @@
 .vscode
 .idea
 /pubspec.yaml
+
+# FVM Version Cache
+.fvm/
+.fvmrc
