@@ -22,7 +22,7 @@ void main(List<String> args) async {
     fileName: 'province',
   );
 
-  final districtMap = getDistrict(list[1], list[2]);
+  final districtMap = getDistrict(list[1], list[2], list[3]);
   await saveToFile(
     districtMap,
     field: 'Map<String, dynamic> thCitiesData',
@@ -172,8 +172,28 @@ List<Map<String, String>> getTownList(
 Map<String, Map<String, Map<String, String>>> getDistrict(
   List<Map<String, String>> provinceList,
   List<Map<String, String>> districtList,
+  List<Map<String, String>> townList,
 ) {
   final map = SplayTreeMap<String, Map<String, Map<String, String>>>();
+
+  for (final town in townList) {
+    final districtCode = town['ADM2_PCODE'] ?? '';
+
+    final townMap = SplayTreeMap<String, Map<String, String>>();
+
+    for (final town in townList) {
+      if (districtCode == town['ADM2_PCODE']) {
+        final name = town['ADM3_TH'] ?? '';
+        final code = town['ADM3_PCODE'] ?? '';
+        townMap[code] = <String, String>{
+          'name': name,
+          'alpha': name[0],
+        };
+      }
+    }
+
+    map[districtCode] = townMap;
+  }
 
   for (final province in provinceList) {
     final provinceCode = province['ADM1_PCODE'] ?? '';
