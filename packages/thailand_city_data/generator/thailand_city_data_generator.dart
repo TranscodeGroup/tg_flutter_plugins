@@ -176,8 +176,8 @@ Map<String, Map<String, Map<String, String>>> getDistrict(
 ) {
   final map = SplayTreeMap<String, Map<String, Map<String, String>>>();
 
-  for (final town in townList) {
-    final districtCode = town['ADM2_PCODE'] ?? '';
+  for (final district in districtList) {
+    final districtCode = district['ADM2_PCODE'] ?? '';
 
     final townMap = SplayTreeMap<String, Map<String, String>>();
 
