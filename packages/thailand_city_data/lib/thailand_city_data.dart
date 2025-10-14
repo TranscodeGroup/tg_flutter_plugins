@@ -1,4 +1,4 @@
-library thailand_city_data;
+library;
 
 export 'src/province.dart';
 export 'src/district.dart';
