@@ -1,6 +1,6 @@
-# thailand_city_data
+# thailand_city_data_2
 
-[![Pub Package](https://img.shields.io/pub/v/thailand_city_data.svg)](https://pub.dev/packages/thailand_city_data)
+[![Pub Package](https://img.shields.io/pub/v/thailand_city_data_2.svg)](https://pub.dev/packages/thailand_city_data_2)
 
 Thailand administrative data for [city_pickers](https://pub.dev/packages/city_pickers).
 
