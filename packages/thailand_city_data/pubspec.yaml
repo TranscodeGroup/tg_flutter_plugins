@@ -1,6 +1,6 @@
-name: thailand_city_data
+name: thailand_city_data_2
 description: Administrative division about Thailand.
-version: 0.0.4
+version: 1.0.0
 homepage: https://github.com/TranscodeGroup/tg_flutter_plugins/tree/main/packages/thailand_city_data
 
 environment:
