@@ -1,9 +1,5 @@
 # CHANGELOG
 
-## 1.0.0
-
-* 修改包名为`thailand_city_data_2`
-
 ## 0.0.4
 
 * 泰国的行政区划数据具体到区
